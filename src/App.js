@@ -3,6 +3,16 @@ import logo from "./logo.svg";
 import "./App.css";
 import L from "leaflet";
 import { Map, TileLayer, Marker, Popup } from "react-leaflet";
+import {
+  Card,
+  Button,
+  CardTitle,
+  CardText,
+  Form,
+  FormGroup,
+  Label,
+  Input
+} from "reactstrap";
 
 var myIcon = L.icon({
   iconUrl:
@@ -35,35 +45,78 @@ class App extends Component {
         });
       },
       () => {
+        /* needed to be fixed from chrome accesscontrolorigin*/
+
         console.log("uh oh");
         fetch("https://ipapi.co/json")
           .then(res => res.json())
           .then(location => {
             console.log(location);
+            this.setState({
+              location: {
+                lat: location.latitude,
+                lng: location.longitude
+              },
+              haveUsersLocation: true,
+              zoom: 13
+            });
           });
       }
     );
   }
 
+  formSubmitted = event => {
+    event.preventDefault();
+  };
+
   render() {
     const position = [this.state.location.lat, this.state.location.lng];
 
     return (
-      <Map className="map" center={position} zoom={this.state.zoom}>
-        <TileLayer
-          attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        {this.state.haveUsersLocation ? (
-          <Marker position={position} icon={myIcon}>
-            <Popup>
-              A pretty CSS3 popup. <br /> Easily customizable.
-            </Popup>
-          </Marker>
-        ) : (
-          ""
-        )}
-      </Map>
+      <div className="map">
+        <Map className="map" center={position} zoom={this.state.zoom}>
+          <TileLayer
+            attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+          {this.state.haveUsersLocation ? (
+            <Marker position={position} icon={myIcon}>
+              <Popup>
+                A pretty CSS3 popup. <br /> Easily customizable.
+              </Popup>
+            </Marker>
+          ) : (
+            ""
+          )}
+        </Map>
+        <Card body className="message-form">
+          <CardTitle> ReactMaps</CardTitle>
+          <CardText>Leave a message with your location</CardText>
+          <Form>
+            <FormGroup>
+              <Label for="name">Name</Label>
+              <Input
+                type="text"
+                name="name"
+                id="name"
+                placeholder="Enter your name"
+              />
+            </FormGroup>
+            <FormGroup>
+              <Label for="message">Message</Label>
+              <Input
+                type="textarea"
+                name="message"
+                id="message"
+                placeholder="Leave your message"
+              />
+            </FormGroup>
+            <Button color="secondary" disabled={!this.state.haveUsersLocation}>
+              Send
+            </Button>{" "}
+          </Form>
+        </Card>
+      </div>
     );
   }
 }

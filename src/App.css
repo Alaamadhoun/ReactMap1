@@ -7,6 +7,14 @@ body {
 #root {
   height: 100%;
 }
+
 .map {
   height: 100%;
+}
+
+.message-form {
+  z-index: 999;
+  position: absolute !important;
+  top: 20px;
+  right: 20px;
 }
