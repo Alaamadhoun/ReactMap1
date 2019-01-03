@@ -29,7 +29,11 @@ class App extends Component {
       lng: -0.09
     },
     haveUsersLocation: false,
-    zoom: 2
+    zoom: 2,
+    userMessage: {
+      name: "",
+      message: ""
+    }
   };
 
   componentDidMount() {
@@ -67,6 +71,17 @@ class App extends Component {
 
   formSubmitted = event => {
     event.preventDefault();
+    console.log(this.state.userMessage);
+  };
+
+  valueChanged = event => {
+    const { name, value } = event.target;
+    this.setState(prevState => ({
+      userMessage: {
+        ...prevState.userMessage,
+        [name]: value
+      }
+    }));
   };
 
   render() {
@@ -90,12 +105,13 @@ class App extends Component {
           )}
         </Map>
         <Card body className="message-form">
-          <CardTitle> ReactMaps</CardTitle>
+          <CardTitle> GuestMaps by React</CardTitle>
           <CardText>Leave a message with your location</CardText>
-          <Form>
+          <Form onSubmit={this.formSubmitted}>
             <FormGroup>
               <Label for="name">Name</Label>
               <Input
+                onChange={this.valueChanged}
                 type="text"
                 name="name"
                 id="name"
@@ -105,6 +121,7 @@ class App extends Component {
             <FormGroup>
               <Label for="message">Message</Label>
               <Input
+                onChange={this.valueChanged}
                 type="textarea"
                 name="message"
                 id="message"
@@ -113,7 +130,7 @@ class App extends Component {
             </FormGroup>
             <Button color="secondary" disabled={!this.state.haveUsersLocation}>
               Send
-            </Button>{" "}
+            </Button>
           </Form>
         </Card>
       </div>
