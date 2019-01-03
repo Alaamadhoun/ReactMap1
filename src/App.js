@@ -18,19 +18,31 @@ class App extends Component {
       lat: 51.505,
       lng: -0.09
     },
-
-    zoom: 13
+    haveUsersLocation: false,
+    zoom: 2
   };
 
   componentDidMount() {
-    navigator.geolocation.getCurrentPosition(position => {
-      this.setState({
-        location: {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude
-        }
-      });
-    });
+    navigator.geolocation.getCurrentPosition(
+      position => {
+        this.setState({
+          location: {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          },
+          haveUsersLocation: true,
+          zoom: 13
+        });
+      },
+      () => {
+        console.log("uh oh");
+        fetch("https://ipapi.co/json")
+          .then(res => res.json())
+          .then(location => {
+            console.log(location);
+          });
+      }
+    );
   }
 
   render() {
@@ -42,11 +54,15 @@ class App extends Component {
           attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <Marker position={position} icon={myIcon}>
-          <Popup>
-            A pretty CSS3 popup. <br /> Easily customizable.
-          </Popup>
-        </Marker>
+        {this.state.haveUsersLocation ? (
+          <Marker position={position} icon={myIcon}>
+            <Popup>
+              A pretty CSS3 popup. <br /> Easily customizable.
+            </Popup>
+          </Marker>
+        ) : (
+          ""
+        )}
       </Map>
     );
   }
