@@ -8,18 +8,33 @@ var myIcon = L.icon({
   iconUrl:
     "https://cdn3.iconfinder.com/data/icons/iconic-1/32/map_pin_fill-512.png",
   iconSize: [35, 51],
-  iconAnchor: [22, 94],
-  popupAnchor: [-3, -76]
+  iconAnchor: [12.5, 41],
+  popupAnchor: [5, -45]
 });
 
 class App extends Component {
   state = {
-    lat: 51.505,
-    lng: -0.09,
+    location: {
+      lat: 51.505,
+      lng: -0.09
+    },
+
     zoom: 13
   };
+
+  componentDidMount() {
+    navigator.geolocation.getCurrentPosition(position => {
+      this.setState({
+        location: {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        }
+      });
+    });
+  }
+
   render() {
-    const position = [this.state.lat, this.state.lng];
+    const position = [this.state.location.lat, this.state.location.lng];
 
     return (
       <Map className="map" center={position} zoom={this.state.zoom}>
